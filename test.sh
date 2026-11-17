@@ -6,4 +6,6 @@ rm -rf out
 mkdir -p out/main out/test
 javac -encoding UTF-8 -d out/main $(find src/main/java -name "*.java")
 javac -encoding UTF-8 -cp out/main -d out/test $(find src/test/java -name "*.java")
-java -Dfile.encoding=UTF-8 -cp out/main:out/test br.com.plataformacursos.VerificacoesPlataforma
+SEP=":"
+case "$(uname -s)" in MINGW*|MSYS*|CYGWIN*) SEP=";" ;; esac
+java -Dfile.encoding=UTF-8 -cp "out/main${SEP}out/test" br.com.plataformacursos.VerificacoesPlataforma
