@@ -376,7 +376,7 @@ Conforme permitido pelo enunciado para a Parte 1:
 | --- | --- | --- |
 | Gustavo Dias | [@gustavofelisbino](https://github.com/gustavofelisbino) | Estrutura inicial do projeto, entidades, Factory Method, Observer e README |
 | Lucas Oliverio | [@olucasoliverio](https://github.com/olucasoliverio) | Front-end web (`index.html`), servidor e API JSON (`ServidorWeb`), modo `--web` com porta configurável e matrículas de exemplo, verificações automatizadas da API e instruções de execução no Windows/PowerShell |
-| _Integrante 3_ | _@usuario_ | _a preencher_ |
+| Isabelle Feltrin | [@isabellefeltrin](https://github.com/isabellefeltrin) | Ajustes finos. |
 | _Integrante 4_ | _@usuario_ | _a preencher_ |
 
 > Cada integrante deve ter pelo menos um commit autoral com sua própria conta GitHub.
