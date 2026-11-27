@@ -58,6 +58,8 @@ public class VerificacoesPlataforma {
         verificar("conclusão exige 100% do curso", VerificacoesPlataforma::conclusaoExigeCursoCompleto);
         verificar("emissor de participação cria CertificadoParticipacao", VerificacoesPlataforma::emissorParticipacao);
         verificar("participação exige mínimo de 75%", VerificacoesPlataforma::participacaoExigeMinimo);
+        verificar("emissor de capacitação cria CertificadoCapacitacao", VerificacoesPlataforma::emissorCapacitacao);
+        verificar("capacitação exige 100% do curso", VerificacoesPlataforma::capacitacaoExigeCursoCompleto);
         verificar("certificado não é emitido duas vezes", VerificacoesPlataforma::certificadoUnico);
         verificar("matrícula cancelada não gera certificado", VerificacoesPlataforma::canceladaSemCertificado);
         verificar("emissor rejeita curso de outro tipo", VerificacoesPlataforma::emissorRejeitaOutroTipo);
@@ -196,6 +198,25 @@ public class VerificacoesPlataforma {
         Contexto ctx = new Contexto();
         Matricula m = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoParticipacao.getId());
         ctx.plataforma.registrarProgresso(m.getId(), 74);
+        esperarErro(() -> ctx.plataforma.emitirCertificado(m.getId()));
+        afirmar(m.getCertificado().isEmpty(), "certificado não deveria existir");
+    }
+
+    private static void emissorCapacitacao() {
+        Contexto ctx = new Contexto();
+        Matricula m = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoCapacitacao.getId());
+        ctx.plataforma.registrarProgresso(m.getId(), 100);
+        Certificado c = ctx.plataforma.emitirCertificado(m.getId());
+        afirmar(c instanceof CertificadoCapacitacao, "classe inesperada: " + c.getClass().getSimpleName());
+        afirmar(c.getCodigo().startsWith("CAPA-"), "prefixo inesperado: " + c.getCodigo());
+        afirmar(((CertificadoCapacitacao) c).getDataValidade().equals(LocalDate.of(2028, 11, 10)), "validade inesperada");
+        afirmar(c.formatar().contains("validade até o dia 10/11/2028"), "texto do certificado inesperado");
+    }
+
+    private static void capacitacaoExigeCursoCompleto() {
+        Contexto ctx = new Contexto();
+        Matricula m = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoCapacitacao.getId());
+        ctx.plataforma.registrarProgresso(m.getId(), 99);
         esperarErro(() -> ctx.plataforma.emitirCertificado(m.getId()));
         afirmar(m.getCertificado().isEmpty(), "certificado não deveria existir");
     }
@@ -355,9 +376,9 @@ public class VerificacoesPlataforma {
         final List<EventoMatricula> eventos = new ArrayList<>();
         final ObservadorMatricula coletor = eventos::add;
         final Aluno aluno;
-        //TODO: adicionar aqui curso de certificação, e incluir verificações para o mesmo
         final Curso cursoConclusao;
         final Curso cursoParticipacao;
+        final Curso cursoCapacitacao;
 
         Contexto() {
             plataforma.registrarEmissor(new EmissorCertificadoConclusao());
@@ -370,6 +391,7 @@ public class VerificacoesPlataforma {
             aluno = plataforma.cadastrarAluno("Aluno Teste", "aluno@email.com");
             cursoConclusao = plataforma.cadastrarCurso("Curso Completo", 20, TipoCertificado.CONCLUSAO);
             cursoParticipacao = plataforma.cadastrarCurso("Workshop", 4, TipoCertificado.PARTICIPACAO);
+            cursoCapacitacao = plataforma.cadastrarCurso("Treinamento", 40, TipoCertificado.CAPACITACAO);
         }
 
         List<TipoEvento> tiposRecebidos() {
