@@ -1,5 +1,7 @@
 package br.com.plataformacursos.notificacao;
 
+import br.com.plataformacursos.dominio.Matricula;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +36,12 @@ public class NotificacaoCoordenacao implements ObservadorMatricula {
         if (!EVENTOS_RELEVANTES.contains(evento.tipo())) {
             return;
         }
-        String aviso = evento.tipo().getTitulo() + ": " + evento.matricula();
+        // Sem Matricula.toString(): o aviso não pode variar com a ordem dos eventos
+        // (ex.: certificado de participação emitido antes dos 100%).
+        Matricula matricula = evento.matricula();
+        String aviso = String.format("%s: matrícula #%d (%s em \"%s\")",
+                evento.tipo().getTitulo(), matricula.getId(),
+                matricula.getAluno().getNome(), matricula.getCurso().getTitulo());
         avisos.add(aviso);
         saida.println("  [Coordenação] " + aviso);
     }

@@ -16,6 +16,8 @@ import br.com.plataformacursos.servico.RegraNegocioException;
 import br.com.plataformacursos.web.ServidorWeb;
 import com.sun.net.httpserver.HttpServer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
@@ -51,6 +53,7 @@ public class VerificacoesPlataforma {
         verificar("e-mail ignora atualização de progresso", VerificacoesPlataforma::emailIgnoraProgresso);
         verificar("observador desanexado não recebe eventos", VerificacoesPlataforma::observadorDesanexado);
         verificar("coordenação é avisada só na conclusão e no cancelamento", VerificacoesPlataforma::coordenacaoAvisadaNosMarcos);
+        verificar("demonstração imprime os avisos da coordenação", VerificacoesPlataforma::demonstracaoImprimeAvisosDaCoordenacao);
         verificar("emissor de conclusão cria CertificadoConclusao", VerificacoesPlataforma::emissorConclusao);
         verificar("conclusão exige 100% do curso", VerificacoesPlataforma::conclusaoExigeCursoCompleto);
         verificar("emissor de participação cria CertificadoParticipacao", VerificacoesPlataforma::emissorParticipacao);
@@ -123,10 +126,36 @@ public class VerificacoesPlataforma {
         Matricula cancelada = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoParticipacao.getId());
         ctx.plataforma.registrarProgresso(cancelada.getId(), 30);
         ctx.plataforma.cancelarMatricula(cancelada.getId());
+        // Certificado de participação emitido antes dos 100%: o aviso da conclusão não muda.
+        Matricula certificadoAntes = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoParticipacao.getId());
+        ctx.plataforma.registrarProgresso(certificadoAntes.getId(), 80);
+        ctx.plataforma.emitirCertificado(certificadoAntes.getId());
+        ctx.plataforma.registrarProgresso(certificadoAntes.getId(), 100);
         afirmar(ctx.coordenacao.getAvisos().equals(List.of(
-                        "Curso concluído: #1 Aluno Teste em \"Curso Completo\" - 100% - Concluída",
-                        "Matrícula cancelada: #2 Aluno Teste em \"Workshop\" - 30% - Cancelada")),
+                        "Curso concluído: matrícula #1 (Aluno Teste em \"Curso Completo\")",
+                        "Matrícula cancelada: matrícula #2 (Aluno Teste em \"Workshop\")",
+                        "Curso concluído: matrícula #3 (Aluno Teste em \"Workshop\")")),
                 "avisos inesperados: " + ctx.coordenacao.getAvisos());
+    }
+
+    // Cobre o que a verificação acima não vê: a linha impressa e o registro feito em Main.
+    private static void demonstracaoImprimeAvisosDaCoordenacao() {
+        ByteArrayOutputStream captura = new ByteArrayOutputStream();
+        PrintStream saidaOriginal = System.out;
+        System.setOut(new PrintStream(captura, true, StandardCharsets.UTF_8));
+        try {
+            Main.main(new String[]{"--demo"});
+        } catch (IOException e) {
+            throw new AssertionError("falha ao executar o --demo", e);
+        } finally {
+            System.setOut(saidaOriginal);
+        }
+        List<String> avisos = captura.toString(StandardCharsets.UTF_8).lines()
+                .filter(linha -> linha.contains("[Coordenação]")).toList();
+        afirmar(avisos.equals(List.of(
+                        "  [Coordenação] Curso concluído: matrícula #1 (Ana Souza em \"Design Patterns na Prática\")",
+                        "  [Coordenação] Matrícula cancelada: matrícula #3 (Bruno Lima em \"Java Orientado a Objetos\")")),
+                "avisos impressos inesperados: " + avisos);
     }
 
     // ------------------------------------------------------------------
