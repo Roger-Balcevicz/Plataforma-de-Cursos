@@ -7,7 +7,7 @@ package br.com.plataformacursos.certificado;
 public enum TipoCertificado {
     CONCLUSAO("Conclusão", "CONC"),
     PARTICIPACAO("Participação", "PART"),
-    MERITO("Mérito", "MERI");
+    CAPACITACAO("Capacitação", "CAPA");
 
     private final String descricao;
     private final String prefixoCodigo;
