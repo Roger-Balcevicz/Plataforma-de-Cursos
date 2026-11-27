@@ -1,11 +1,6 @@
 package br.com.plataformacursos;
 
-import br.com.plataformacursos.certificado.Certificado;
-import br.com.plataformacursos.certificado.CertificadoConclusao;
-import br.com.plataformacursos.certificado.CertificadoParticipacao;
-import br.com.plataformacursos.certificado.EmissorCertificadoConclusao;
-import br.com.plataformacursos.certificado.EmissorCertificadoParticipacao;
-import br.com.plataformacursos.certificado.TipoCertificado;
+import br.com.plataformacursos.certificado.*;
 import br.com.plataformacursos.dominio.Aluno;
 import br.com.plataformacursos.dominio.Curso;
 import br.com.plataformacursos.dominio.Matricula;
@@ -319,6 +314,7 @@ public class VerificacoesPlataforma {
         Contexto() {
             plataforma.registrarEmissor(new EmissorCertificadoConclusao());
             plataforma.registrarEmissor(new EmissorCertificadoParticipacao());
+            plataforma.registrarEmissor(new EmissorCertificadoCapacitacao());
             plataforma.registrarObservador(email);
             plataforma.registrarObservador(notificacaoPlataforma);
             plataforma.registrarObservador(coletor);
