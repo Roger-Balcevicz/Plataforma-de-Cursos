@@ -6,6 +6,7 @@ import br.com.plataformacursos.dominio.Curso;
 import br.com.plataformacursos.dominio.Matricula;
 import br.com.plataformacursos.dominio.StatusMatricula;
 import br.com.plataformacursos.notificacao.EventoMatricula;
+import br.com.plataformacursos.notificacao.NotificacaoCoordenacao;
 import br.com.plataformacursos.notificacao.NotificacaoEmail;
 import br.com.plataformacursos.notificacao.NotificacaoPlataforma;
 import br.com.plataformacursos.notificacao.ObservadorMatricula;
@@ -49,6 +50,7 @@ public class VerificacoesPlataforma {
         verificar("conclusão automática ao atingir 100%", VerificacoesPlataforma::conclusaoAutomatica);
         verificar("e-mail ignora atualização de progresso", VerificacoesPlataforma::emailIgnoraProgresso);
         verificar("observador desanexado não recebe eventos", VerificacoesPlataforma::observadorDesanexado);
+        verificar("coordenação é avisada só na conclusão e no cancelamento", VerificacoesPlataforma::coordenacaoAvisadaNosMarcos);
         verificar("emissor de conclusão cria CertificadoConclusao", VerificacoesPlataforma::emissorConclusao);
         verificar("conclusão exige 100% do curso", VerificacoesPlataforma::conclusaoExigeCursoCompleto);
         verificar("emissor de participação cria CertificadoParticipacao", VerificacoesPlataforma::emissorParticipacao);
@@ -83,7 +85,7 @@ public class VerificacoesPlataforma {
         afirmar(ctx.eventos.get(0).tipo() == TipoEvento.MATRICULA_REALIZADA, "tipo inesperado");
         afirmar(ctx.email.getEnviados().size() == 1, "e-mail de boas-vindas não enviado");
         afirmar(ctx.notificacaoPlataforma.caixaDeEntrada(ctx.aluno).size() == 1, "caixa de entrada vazia");
-        afirmar(m.getObservadores().size() == 3, "observadores não anexados à matrícula");
+        afirmar(m.getObservadores().size() == 4, "observadores não anexados à matrícula");
     }
 
     private static void conclusaoAutomatica() {
@@ -110,6 +112,21 @@ public class VerificacoesPlataforma {
         m.desanexar(ctx.coletor);
         ctx.plataforma.registrarProgresso(m.getId(), 40);
         afirmar(ctx.eventos.size() == 1, "observador desanexado recebeu evento");
+    }
+
+    private static void coordenacaoAvisadaNosMarcos() {
+        Contexto ctx = new Contexto();
+        Matricula concluida = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoConclusao.getId());
+        ctx.plataforma.registrarProgresso(concluida.getId(), 50);
+        ctx.plataforma.registrarProgresso(concluida.getId(), 100);
+        ctx.plataforma.emitirCertificado(concluida.getId());
+        Matricula cancelada = ctx.plataforma.matricular(ctx.aluno.getId(), ctx.cursoParticipacao.getId());
+        ctx.plataforma.registrarProgresso(cancelada.getId(), 30);
+        ctx.plataforma.cancelarMatricula(cancelada.getId());
+        afirmar(ctx.coordenacao.getAvisos().equals(List.of(
+                        "Curso concluído: #1 Aluno Teste em \"Curso Completo\" - 100% - Concluída",
+                        "Matrícula cancelada: #2 Aluno Teste em \"Workshop\" - 30% - Cancelada")),
+                "avisos inesperados: " + ctx.coordenacao.getAvisos());
     }
 
     // ------------------------------------------------------------------
@@ -305,6 +322,7 @@ public class VerificacoesPlataforma {
         final PlataformaCursos plataforma = new PlataformaCursos(RELOGIO);
         final NotificacaoEmail email = new NotificacaoEmail(SILENCIOSO);
         final NotificacaoPlataforma notificacaoPlataforma = new NotificacaoPlataforma(SILENCIOSO);
+        final NotificacaoCoordenacao coordenacao = new NotificacaoCoordenacao(SILENCIOSO);
         final List<EventoMatricula> eventos = new ArrayList<>();
         final ObservadorMatricula coletor = eventos::add;
         final Aluno aluno;
@@ -318,6 +336,7 @@ public class VerificacoesPlataforma {
             plataforma.registrarEmissor(new EmissorCertificadoCapacitacao());
             plataforma.registrarObservador(email);
             plataforma.registrarObservador(notificacaoPlataforma);
+            plataforma.registrarObservador(coordenacao);
             plataforma.registrarObservador(coletor);
             aluno = plataforma.cadastrarAluno("Aluno Teste", "aluno@email.com");
             cursoConclusao = plataforma.cadastrarCurso("Curso Completo", 20, TipoCertificado.CONCLUSAO);

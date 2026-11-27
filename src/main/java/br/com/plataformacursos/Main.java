@@ -6,6 +6,7 @@ import br.com.plataformacursos.certificado.EmissorCertificadoParticipacao;
 import br.com.plataformacursos.console.DadosIniciais;
 import br.com.plataformacursos.console.Demonstracao;
 import br.com.plataformacursos.console.MenuConsole;
+import br.com.plataformacursos.notificacao.NotificacaoCoordenacao;
 import br.com.plataformacursos.notificacao.NotificacaoEmail;
 import br.com.plataformacursos.notificacao.NotificacaoPlataforma;
 import br.com.plataformacursos.servico.PlataformaCursos;
@@ -39,6 +40,7 @@ public class Main {
         NotificacaoPlataforma notificacaoPlataforma = new NotificacaoPlataforma(System.out);
         plataforma.registrarObservador(new NotificacaoEmail(System.out));
         plataforma.registrarObservador(notificacaoPlataforma);
+        plataforma.registrarObservador(new NotificacaoCoordenacao(System.out));
 
         DadosIniciais.carregar(plataforma);
 
