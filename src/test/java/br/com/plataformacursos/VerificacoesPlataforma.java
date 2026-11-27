@@ -156,7 +156,8 @@ public class VerificacoesPlataforma {
                 .filter(linha -> linha.contains("[Coordenação]")).toList();
         afirmar(avisos.equals(List.of(
                         "  [Coordenação] Curso concluído: matrícula #1 (Ana Souza em \"Design Patterns na Prática\")",
-                        "  [Coordenação] Matrícula cancelada: matrícula #3 (Bruno Lima em \"Java Orientado a Objetos\")")),
+                        "  [Coordenação] Matrícula cancelada: matrícula #3 (Bruno Lima em \"Java Orientado a Objetos\")",
+                        "  [Coordenação] Curso concluído: matrícula #4 (Ana Souza em \"Segurança da Informação\")")),
                 "avisos impressos inesperados: " + avisos);
     }
 
