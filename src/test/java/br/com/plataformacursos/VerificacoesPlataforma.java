@@ -308,6 +308,7 @@ public class VerificacoesPlataforma {
         final List<EventoMatricula> eventos = new ArrayList<>();
         final ObservadorMatricula coletor = eventos::add;
         final Aluno aluno;
+        //TODO: adicionar aqui curso de certificação, e incluir verificações para o mesmo
         final Curso cursoConclusao;
         final Curso cursoParticipacao;
 
