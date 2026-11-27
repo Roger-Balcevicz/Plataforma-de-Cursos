@@ -26,7 +26,7 @@ public class CertificadoCapacitacao extends Certificado {
     @Override
     protected String gerarTexto() {
         return String.format("Certificamos que %s concluiu com êxito o curso \"%s\" (%d horas),%n"
-                + " com validade até o dia %s.",
+                + "com validade até o dia %s.",
                 getNomeAluno(), getTituloCurso(), getCargaHoraria(),
                 getDataValidade().format(Certificado.FORMATO_DATA));
     }
