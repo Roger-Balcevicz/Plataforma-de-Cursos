@@ -7,7 +7,7 @@ import java.time.LocalDate;
 /**
  * Factory Method: <b>ConcreteProduct</b>.
  *
- * <p>Certificado de extensão: </p>
+ * <p>Certificado de capacitação: atesta que o aluno concluiu o curso, com a data de validade do certificado.</p>
  */
 public class CertificadoCapacitacao extends Certificado {
 
@@ -25,11 +25,10 @@ public class CertificadoCapacitacao extends Certificado {
 
     @Override
     protected String gerarTexto() {
-        return String.format(
-                "Certificamos que %s recebeu este reconhecimento " +
-                "por seu desempenho excepcional no curso de \"%s\" (%d horas).",
-                getNomeAluno(), getTituloCurso(), getCargaHoraria()
-        );
+        return String.format("Certificamos que %s concluiu com êxito o curso \"%s\" (%d horas),%n"
+                + " com validade até o dia %s.",
+                getNomeAluno(), getTituloCurso(), getCargaHoraria(),
+                getDataValidade().format(Certificado.FORMATO_DATA));
     }
 
     public LocalDate getDataValidade() {
