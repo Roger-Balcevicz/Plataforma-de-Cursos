@@ -401,6 +401,9 @@ Conforme permitido pelo enunciado para a Parte 1:
 | Gustavo Dias | [@gustavofelisbino](https://github.com/gustavofelisbino) | Estrutura inicial do projeto, entidades, Factory Method, Observer e README |
 | Lucas Oliverio | [@olucasoliverio](https://github.com/olucasoliverio) | Front-end web (`index.html`), servidor e API JSON (`ServidorWeb`), modo `--web` com porta configurável e matrículas de exemplo, verificações automatizadas da API e instruções de execução no Windows/PowerShell |
 | Isabelle Feltrin | [@isabellefeltrin](https://github.com/isabellefeltrin) | Ajustes finos. |
-| _Integrante 4_ | _@usuario_ | _a preencher_ |
+| Luis Filipe | [@luisfilipedm](https://github.com/luisfilipedm) | _a preencher_ |
+| Bruno Monteiro Bonifácio | [@brunomonteirobonifacio](https://github.com/brunomonteirobonifacio) | Extensão do Factory Method na Parte 2: novo tipo de certificado de capacitação (`CertificadoCapacitacao` e `EmissorCertificadoCapacitacao`), com validade de 2 anos |
+| Gianluca Andrade | [@GiaNinWorld](https://github.com/GiaNinWorld) | Extensão do Observer na Parte 2: canal de notificação da coordenação (`NotificacaoCoordenacao`) e suas verificações |
+| Roger Balcevicz | [@Roger-Balcevicz](https://github.com/Roger-Balcevicz) | Verificações do certificado de capacitação, curso de capacitação nos dados de exemplo, passo da capacitação no modo demonstração e atualização do README para a Parte 2 |
 
 > Cada integrante deve ter pelo menos um commit autoral com sua própria conta GitHub.
